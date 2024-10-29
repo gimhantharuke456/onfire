@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:onfire/models/fire.detection.model.dart';
+import 'package:onfire/models/fire.detection.service.dart';
 
 class PressureControlView extends StatefulWidget {
   const PressureControlView({super.key});
@@ -8,8 +10,7 @@ class PressureControlView extends StatefulWidget {
 }
 
 class _PressureControlViewState extends State<PressureControlView> {
-  bool nozzle1 = true;
-  bool nozzle2 = false;
+  final FireDetectionService _fireDetectionService = FireDetectionService();
   bool waterSwitch = true;
   bool foamSwitch = false;
   bool co2Switch = false;
@@ -19,84 +20,142 @@ class _PressureControlViewState extends State<PressureControlView> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Nozzle',
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 48),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+        child: StreamBuilder<List<FireDetectionData>>(
+          stream: _fireDetectionService.getFireDetectionStream(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            }
+
+            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            final fireData = snapshot.data!.first; // Using the first record
+            final isNozzleOn = fireData.nozzleStatus == "ON";
+
+            return Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _NozzleColumn(
-                    label: 'ON',
-                    value: nozzle1,
+                  const Text(
+                    'Nozzle',
+                    style: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 48),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _NozzleColumn(
+                        label: 'ON',
+                        value: isNozzleOn,
+                        onChanged: (value) {
+                          if (value) {
+                            _fireDetectionService.updateNozzleStatus(
+                                fireData.id, "ON");
+                          }
+                        },
+                      ),
+                      _NozzleColumn(
+                        label: 'OFF',
+                        value: !isNozzleOn,
+                        onChanged: (value) {
+                          if (value) {
+                            _fireDetectionService.updateNozzleStatus(
+                                fireData.id, "OFF");
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 80),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Nozzle Output',
+                        style: TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        'Severity: ${fireData.severityLabel}',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                          color: _getSeverityColor(fireData.severityLabel),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 48),
+                  _OutputSwitch(
+                    label: 'Water',
+                    value: waterSwitch,
+                    color: Colors.blue,
                     onChanged: (value) {
-                      setState(() {
-                        nozzle1 = value;
-                        if (value) nozzle2 = false;
-                      });
+                      setState(() => waterSwitch = value);
                     },
                   ),
-                  _NozzleColumn(
-                    label: 'OFF',
-                    value: nozzle2,
+                  const SizedBox(height: 24),
+                  _OutputSwitch(
+                    label: 'Foam',
+                    value: foamSwitch,
+                    color: const Color(0xFFE57373),
                     onChanged: (value) {
-                      setState(() {
-                        nozzle2 = value;
-                        if (value) nozzle1 = false;
-                      });
+                      setState(() => foamSwitch = value);
                     },
+                  ),
+                  const SizedBox(height: 24),
+                  _OutputSwitch(
+                    label: 'CO2',
+                    value: co2Switch,
+                    color: const Color(0xFF7986CB),
+                    onChanged: (value) {
+                      setState(() => co2Switch = value);
+                    },
+                  ),
+                  const SizedBox(height: 32),
+                  Text(
+                    'Distance to Fire: ${fireData.distanceToFire.toStringAsFixed(2)} meters',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Last Updated: ${fireData.timestamp}',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey,
+                    ),
                   ),
                 ],
               ),
-              const SizedBox(height: 80),
-              const Text(
-                'Nozzle Output',
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 48),
-              _OutputSwitch(
-                label: 'Water',
-                value: waterSwitch,
-                color: Colors.blue,
-                onChanged: (value) {
-                  setState(() => waterSwitch = value);
-                },
-              ),
-              const SizedBox(height: 24),
-              _OutputSwitch(
-                label: 'Foam',
-                value: foamSwitch,
-                color: Color(0xFFE57373), // Light red color
-                onChanged: (value) {
-                  setState(() => foamSwitch = value);
-                },
-              ),
-              const SizedBox(height: 24),
-              _OutputSwitch(
-                label: 'CO2',
-                value: co2Switch,
-                color: Color(0xFF7986CB), // Purple-blue color
-                onChanged: (value) {
-                  setState(() => co2Switch = value);
-                },
-              ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
+  }
+
+  Color _getSeverityColor(String severity) {
+    switch (severity.toLowerCase()) {
+      case 'low':
+        return Colors.green;
+      case 'medium':
+        return Colors.orange;
+      case 'high':
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
   }
 }
 
@@ -117,7 +176,7 @@ class _NozzleColumn extends StatelessWidget {
       children: [
         Text(
           label,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 24,
             color: Color(0xFFFF5722),
             fontWeight: FontWeight.w500,
@@ -127,10 +186,10 @@ class _NozzleColumn extends StatelessWidget {
         Switch(
           value: value,
           onChanged: onChanged,
-          activeColor: Color(0xFF7986CB),
-          activeTrackColor: Color(0xFF7986CB).withOpacity(0.4),
-          inactiveThumbColor: Color(0xFF7986CB),
-          inactiveTrackColor: Color(0xFF7986CB).withOpacity(0.4),
+          activeColor: const Color(0xFF7986CB),
+          activeTrackColor: const Color(0xFF7986CB).withOpacity(0.4),
+          inactiveThumbColor: const Color(0xFF7986CB),
+          inactiveTrackColor: const Color(0xFF7986CB).withOpacity(0.4),
         ),
       ],
     );

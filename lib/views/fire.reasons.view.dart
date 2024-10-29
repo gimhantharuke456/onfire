@@ -25,7 +25,7 @@ class FireReasonsView extends StatelessWidget {
             }
 
             final fireData = snapshot.data!;
-
+            print(fireData.fireType);
             return SingleChildScrollView(
               padding: const EdgeInsets.all(24),
               child: Column(
@@ -42,21 +42,28 @@ class FireReasonsView extends StatelessWidget {
                   _FireTypeSwitch(
                     label: 'A Type Of Fire',
                     color: Color(0xFFFF5722),
-                    value: fireData.fireType == 'A',
+                    value: fireData.fireType == 'Type A',
                     onChanged: (_) {},
                   ),
                   const SizedBox(height: 24),
                   _FireTypeSwitch(
                     label: 'B Type Of Fire',
                     color: Color(0xFFFF9E80),
-                    value: fireData.fireType == 'B',
+                    value: fireData.fireType == 'Type B',
                     onChanged: (_) {},
                   ),
                   const SizedBox(height: 24),
                   _FireTypeSwitch(
                     label: 'C Type Of Fire',
                     color: Color(0xFF7986CB),
-                    value: fireData.fireType == 'C',
+                    value: fireData.fireType == 'Type C',
+                    onChanged: (_) {},
+                  ),
+                  const SizedBox(height: 24),
+                  _FireTypeSwitch(
+                    label: 'Unknown',
+                    color: Color(0xFFFF5722),
+                    value: fireData.fireType == 'Unknown',
                     onChanged: (_) {},
                   ),
                   const SizedBox(height: 48),
