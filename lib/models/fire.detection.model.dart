@@ -16,6 +16,7 @@ class FireDetectionData {
   });
 
   factory FireDetectionData.fromMap(String docId, Map<Object?, Object?> map) {
+    print("abc is $map");
     return FireDetectionData(
       id: docId,
       distanceToFire: (map['distance_to_fire'] as num).toDouble(),

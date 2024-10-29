@@ -11,12 +11,18 @@ class FireDetectionService {
       final data = event.snapshot.value as Map<Object?, Object?>?;
       if (data == null) return [];
 
-      return data.entries.map((entry) {
+      final fireDataList = data.entries.map((entry) {
         return FireDetectionData.fromMap(
           entry.key.toString(),
           entry.value as Map<Object?, Object?>,
         );
       }).toList();
+
+      // Sort by timestamp in descending order
+      fireDataList.sort((a, b) =>
+          DateTime.parse(b.timestamp).compareTo(DateTime.parse(a.timestamp)));
+
+      return fireDataList;
     });
   }
 
