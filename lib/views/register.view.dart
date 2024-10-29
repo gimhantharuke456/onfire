@@ -1,16 +1,57 @@
 import 'package:flutter/material.dart';
+import 'package:onfire/services/auth.service.dart';
 import 'package:onfire/utils/index.dart';
 import 'package:onfire/views/login.activity.dart';
 import 'package:onfire/views/register.successfull.view.dart';
 import 'package:onfire/widgets/custom.button.dart';
 import 'package:onfire/widgets/custom.input.field.dart';
 
-class RegisterView extends StatelessWidget {
+class RegisterView extends StatefulWidget {
   RegisterView({super.key});
 
+  @override
+  State<RegisterView> createState() => _RegisterViewState();
+}
+
+class _RegisterViewState extends State<RegisterView> {
   final _emailController = TextEditingController();
+
   final _usernameController = TextEditingController();
+
   final _systemCodeController = TextEditingController();
+
+  final _authService = AuthService();
+
+  void _handleRegistration(BuildContext context) async {
+    // Show loading indicator
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+
+    final result = await _authService.signUp(
+      email: _emailController.text.trim(),
+      username: _usernameController.text.trim(),
+      systemCode: _systemCodeController.text.trim(),
+    );
+
+    // Hide loading indicator
+    Navigator.pop(context);
+
+    if (result['success']) {
+      context.navigator(context, const RegisterSuccessfullView());
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(result['message']),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

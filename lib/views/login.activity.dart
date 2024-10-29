@@ -1,15 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:onfire/services/auth.service.dart';
 import 'package:onfire/utils/index.dart';
+import 'package:onfire/views/home.view.dart';
 import 'package:onfire/views/register.view.dart';
 import 'package:onfire/views/splash.view.dart';
 import 'package:onfire/widgets/custom.button.dart';
 import 'package:onfire/widgets/custom.input.field.dart';
 
-class LoginView extends StatelessWidget {
+class LoginView extends StatefulWidget {
   LoginView({super.key});
 
+  @override
+  State<LoginView> createState() => _LoginViewState();
+}
+
+class _LoginViewState extends State<LoginView> {
   final _usernameController = TextEditingController();
+
   final _systemCodeController = TextEditingController();
+
+  final _authService = AuthService();
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +75,7 @@ class LoginView extends StatelessWidget {
                 child: CustomButton(
                   text: 'Login',
                   onTap: () {
-                    // Handle login logic here
+                    _handleLogin(context);
                   },
                 ),
               ),
@@ -92,5 +102,23 @@ class LoginView extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _handleLogin(BuildContext context) async {
+    final result = await _authService.login(
+      email: _usernameController.text.trim(),
+      systemCode: _systemCodeController.text.trim(),
+    );
+
+    if (result['success']) {
+      context.navigator(context, HomeView());
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(result['message']),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 }

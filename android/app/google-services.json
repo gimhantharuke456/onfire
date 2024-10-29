@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "86415737366",
+    "firebase_url": "https://phoenix-74b21-default-rtdb.firebaseio.com",
+    "project_id": "phoenix-74b21",
+    "storage_bucket": "phoenix-74b21.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:86415737366:android:9f1fc6b7d5114fc5f26b37",
+        "android_client_info": {
+          "package_name": "com.a.c"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB39xDeFrKfMhSQB9Fi3x8IncjxlQQYPt8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:86415737366:android:dad6a24899d5b6d8f26b37",
+        "android_client_info": {
+          "package_name": "com.fire.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB39xDeFrKfMhSQB9Fi3x8IncjxlQQYPt8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
