@@ -22,13 +22,13 @@ class HomeView extends StatelessWidget {
               const SizedBox(
                 height: 64,
               ),
-              ListTile(
-                leading: Icon(Icons.person),
-                title: Text("Profile"),
-                onTap: () {
-                  context.navigator(context, const ProfileView());
-                },
-              ),
+              // ListTile(
+              //   leading: Icon(Icons.person),
+              //   title: Text("Profile"),
+              //   onTap: () {
+              //     context.navigator(context, const ProfileView());
+              //   },
+              // ),
               ListTile(
                 leading: Icon(Icons.add_box_outlined),
                 onTap: () {
