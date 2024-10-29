@@ -24,7 +24,7 @@ class _PressureControlViewState extends State<PressureControlView> {
           stream: _fireDetectionService.getFireDetectionStream(),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
-              return Center(child: Text('Errors: ${snapshot.error}'));
+              return Center(child: Text('Error: ${snapshot.error}'));
             }
 
             if (!snapshot.hasData || snapshot.data!.isEmpty) {

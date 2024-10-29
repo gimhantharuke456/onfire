@@ -112,7 +112,7 @@ class _RegisterViewState extends State<RegisterView> {
                 child: CustomButton(
                   text: 'Register',
                   onTap: () {
-                    context.navigator(context, RegisterSuccessfullView());
+                    _handleRegistration(context);
                   },
                 ),
               ),

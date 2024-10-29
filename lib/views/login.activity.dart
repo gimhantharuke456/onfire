@@ -105,8 +105,8 @@ class _LoginViewState extends State<LoginView> {
   }
 
   void _handleLogin(BuildContext context) async {
-    final result = await _authService.login(
-      email: _usernameController.text.trim(),
+    final result = await _authService.signIn(
+      username: _usernameController.text.trim(),
       systemCode: _systemCodeController.text.trim(),
     );
 
