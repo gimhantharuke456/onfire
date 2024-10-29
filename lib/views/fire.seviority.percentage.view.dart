@@ -29,9 +29,7 @@ class FireSeverityPercentageView extends StatelessWidget {
               return Center(child: Text('No fire detection data available'));
             }
 
-            // Here we take the first data item for simplicity
             final fireData = snapshot.data!.first;
-            print("Fire Data ${fireData.severityValue}");
             final severityValue = fireData.severityValue / 100.0;
 
             return Column(
@@ -45,8 +43,7 @@ class FireSeverityPercentageView extends StatelessWidget {
                 CircularPercentIndicator(
                   radius: 120.0,
                   lineWidth: 20.0,
-                  percent:
-                      severityValue.clamp(0.0, 1.0), // Ensure within bounds
+                  percent: severityValue.clamp(0.0, 1.0),
                   center: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -62,7 +59,7 @@ class FireSeverityPercentageView extends StatelessWidget {
                       ),
                     ],
                   ),
-                  progressColor: Colors.purple,
+                  progressColor: _getProgressColor(severityValue),
                   backgroundColor: Colors.grey[300]!,
                   circularStrokeCap: CircularStrokeCap.round,
                 ),
@@ -97,6 +94,16 @@ class FireSeverityPercentageView extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Color _getProgressColor(double severityValue) {
+    if (severityValue < 0.33) {
+      return Colors.green; // Low severity
+    } else if (severityValue < 0.66) {
+      return Colors.orange; // Medium severity
+    } else {
+      return Colors.red; // High severity
+    }
   }
 
   Widget _buildSeverityIndicator(Color color, String label) {
